@@ -23,7 +23,7 @@ import slimeknights.tconstruct.library.events.TinkerRegisterEvent;
 public class GregsConstruct {
     public static final String MODID = "gtconstruct";
     public static final String NAME = "Greg's Construct";
-    public static final String VERSION = "@VERSION@";
+    public static final String VERSION = "blox-1.0.1";
 
     public static Logger logger;
 
