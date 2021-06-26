@@ -1,13 +1,15 @@
 buildscript {
     repositories {
         jcenter()
-        maven { url = "http://files.minecraftforge.net/maven" }
+        maven { url = "https://files.minecraftforge.net/maven" }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+		classpath(group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.+', changing: true) {
+            exclude group: 'trove', module: 'trove'
+        }
     }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'net.minecraftforge.gradle'
 
 
 version = "${minecraft_version}-${mod_version}"
@@ -20,26 +22,60 @@ compileJava {
 }
 
 minecraft {
-    version = "${minecraft_version}-14.23.5.2855"
-    runDir = "run"
-    mappings = "stable_39"
+    //version = "${minecraft_version}-14.23.5.2855"
+    //runDir = "run"
+    mappings channel: 'stable', version: '39-1.12'
 
-    replace("@VERSION@",project.version)
-    replaceIn("GregsConstruct.java")
+    //replace("@VERSION@",project.version)
+    //replaceIn("GregsConstruct.java")
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                gregsconstruct {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                gregsconstruct {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
 }
 
 repositories {
     maven {
         name = "ChickenBones maven"
-        url = "http://chickenbones.net/maven/"
+        url = "https://chickenbones.net/maven/"
     }
     maven {
         name = "tterrag maven"
-        url = "http://maven.tterrag.com/"
+        url = "https://maven.tterrag.com/"
     }
     maven {
         name = "Progwml6 maven"
-        url = "http://dvs1.progwml6.com/files/maven/"
+        url = "https://dvs1.progwml6.com/files/maven/"
     }
     maven {
         name = "CraftTweaker Maven"
@@ -48,24 +84,26 @@ repositories {
 }
 
 dependencies {
-    deobfCompile "codechicken:ChickenASM:${short_version}-${chickenasm_version}"
-    deobfCompile "codechicken:CodeChickenLib:${minecraft_version}-${ccl_version}:deobf"
-    deobfCompile "codechicken:ForgeMultipart:${minecraft_version}-${multipart_version}:deobf"
-    deobfCompile "CraftTweaker2:CraftTweaker2-MC${stripped_version}-Main:${crafttweaker_version}"
-    deobfCompile "mezz.jei:jei_${minecraft_version}:${jei_version}"
-    deobfCompile "slimeknights.mantle:Mantle:${short_version}-${mantle_version}"
-    deobfCompile "slimeknights:TConstruct:${minecraft_version}-${tconstruct_version}"
-    compile files("libs/gregtech-${minecraft_version}-${gt_version}.jar")
+    minecraft "net.minecraftforge:forge:${minecraft_version}-14.23.5.2855"
+
+    implementation "codechicken:ChickenASM:${short_version}-${chickenasm_version}"
+    implementation "codechicken:CodeChickenLib:${minecraft_version}-${ccl_version}:deobf"
+    implementation "codechicken:ForgeMultipart:${minecraft_version}-${multipart_version}:deobf"
+    implementation "CraftTweaker2:CraftTweaker2-MC${stripped_version}-Main:${crafttweaker_version}"
+    implementation "mezz.jei:jei_${minecraft_version}:${jei_version}"
+    implementation "slimeknights.mantle:Mantle:${short_version}-${mantle_version}"
+    implementation "slimeknights:TConstruct:${minecraft_version}-${tconstruct_version}"
+    implementation files("libs/gregtech-${minecraft_version}-${gt_version}.jar")
 }
 
 processResources {
     inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+    inputs.property "mcversion", "${minecraft_version}-14.23.5.2855"
 
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
                 
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand 'version':project.version, 'mcversion':"${minecraft_version}-14.23.5.2855"
     }
         
     from(sourceSets.main.resources.srcDirs) {
