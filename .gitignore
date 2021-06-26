@@ -121,3 +121,5 @@ gradle-app.setting
 
 # Ignore local libs folder
 libs/
+# Ignore local properties
+local.properties
